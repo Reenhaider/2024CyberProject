@@ -1,0 +1,280 @@
+
+## 1. DMZ Web server
+Oracle virtual box  
+Ubuntu22.04.4 Desktop – 80Gig dynamic disk , 8Gig RAM  
+Note: can use NAT networking to start with  
+
+
+Oracle Virtual Box
+Storage > controller > Optical drive image - C:\Users\sgale\Downloads\ubuntu-22.04.4-desktop-amd64.iso
+
+Install The OS, login and run terminal
+```
+sudo apt update
+sudo apt upgrade
+```
+
+### 1.1 Oracle Virtual Box guest additions (desktop only)
+20.04 guest additions - https://www.linuxuprising.com/2019/01/manual-virtualbox-guest-additions.html  
+```
+sudo apt install gcc make perl dkms
+```
+```
+reboot
+```
+Install guest additions - Devices > Insert Guest Additions CD Image  
+Run the installer  
+
+After Guest additions installed ok  
+Devices > Shared Clipboard > Bidirectional (can now copy and paste Btw windows)  
+```
+reboot
+```
+
+## 1.2 Elastic updates behind SSL decryption
+Elastic updates behind SSL decryption (apt behind firewall with self signed cert)  
+Note: with ssl decryption apt updates will fail for elastic repo using https. the change below will ignore seldf signed cert errors in apt updates for a specified domain  
+```
+cd /etc/apt/apt.conf.d/
+```
+```
+sudo nano 95sgElastic
+```
+```
+Acquire::https::artifacts.elastic.co::Verify-Peer "false";
+Acquire::https::artifacts.elastic.co::Verify-Host "false";
+```
+```
+sudo apt update
+```
+ref: https://unix.stackexchange.com/questions/317695/is-it-possible-to-have-apt-accept-an-invalid-certificate  
+
+
+### copy PA cert using windows scp to Ubuntu server
+```
+C:\Users\Steve>scp c:\users\steve\Desktop\*.crt steve@192.168.100.200:/home/steve/
+```
+### add PA cert  to Ubuntu server trusted root
+```
+cd ~
+ls cert_trusted-cert-011023.crt
+sudo cp cert_trusted-cert-011023.crt /usr/local/share/ca-certificates/ 
+sudo update-ca-certificates -v
+openssl verify cert_trusted-cert-011023.crt
+```
+
+# 4. Implement Ubuntu ELK SIEM  - install elastic stack - elastic , kibana
+
+
+#### Install ssh server if not installed (if using minimal Ubuntu desktop)
+```
+sudo apt install openssh-server
+
+```
+## 4.1 Install Elasticsearch:
+
+### Install Elasticsearch with Debian Package
+[Install Elasticsearch with Debian Package](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb)  
+
+```
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+```
+```
+sudo apt-get install apt-transport-https
+```
+```
+echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+```
+```
+sudo apt-get update && sudo apt-get install elasticsearch
+```
+
+### Start Elasticsearch with security enabled
+
+[Start Elasticsearch with security enabled](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html#deb-security-configuration)
+
+```
+export ELASTIC_PASSWORD="your_password"
+```
+
+#### Running Elasticsearch with systemd
+
+```
+sudo /bin/systemctl daemon-reload
+```
+```
+sudo /bin/systemctl enable elasticsearch.service
+```
+
+### 4.2 Single Node is default
+
+### 4.3 install kibana
+
+```
+cat /etc/hosts
+```
+modify with your hostname  
+```
+sudo nano /etc/hosts
+```
+```
+127.0.0.1	localhost
+127.0.1.1	UbuntuSiem
+192.168.100.200 UbuntuSiem
+
+# The following lines are desirable for IPv6 capable hosts
+
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+```
+
+#### add a record in dns 
+
+
+
+```
+sudo apt install kibana  
+```
+```
+sudo /usr/share/kibana/bin/kibana-encryption-keys generate –q 
+
+```
+Note the encryption keys generated   
+
+Modify below with your host name  
+```
+echo "server.host: \"UbuntuSiem\"" | sudo tee -a /etc/kibana/kibana.yml 
+```
+
+```
+sudo systemctl enable elasticsearch kibana --now
+```
+
+### 4.4 Enrol Kibana
+
+```
+sudo /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+```
+###### note enrolment token from above
+
+
+```
+sudo systemctl status kibana
+```
+from above output  (Modify with your host name)  
+http://UbuntuSiem:5601/?code=419622  
+###### paste in enrolment token
+press [configure elastic]  
+
+Note if asked for a verification code run the following to get the code and  
+```
+sudo /usr/share/kibana/bin/kibana-verification-code
+```
+
+
+login as:  
+username: elastic  
+Password: (noted password from 4.1)  
+
+
+
+### 4.5 Enable HTTPS for Kibana
+Execute the below commands one at a time - when asked for a password use the enter key  
+```
+sudo /usr/share/elasticsearch/bin/elasticsearch-certutil ca 
+```
+
+Modify below with your host name, add domain entry also  
+```
+sudo /usr/share/elasticsearch/bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12 --dns UbuntuSiem --out kibana-server.p12 
+```
+ 
+```
+sudo openssl pkcs12 -in /usr/share/elasticsearch/elastic-stack-ca.p12 -clcerts -nokeys -out /etc/kibana/kibana-server_ca.crt 
+```
+```
+sudo openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.crt -clcerts -nokeys 
+```
+```
+sudo openssl pkcs12 -in /usr/share/elasticsearch/kibana-server.p12 -out /etc/kibana/kibana-server.key -nocerts -nodes 
+```
+```
+sudo chown root:kibana /etc/kibana/kibana-server_ca.crt 
+```
+```
+sudo chown root:kibana /etc/kibana/kibana-server.key 
+```
+```
+sudo chown root:kibana /etc/kibana/kibana-server.crt 
+```
+```
+sudo chmod 660 /etc/kibana/kibana-server_ca.crt 
+```
+```
+sudo chmod 660 /etc/kibana/kibana-server.key 
+```
+```
+sudo chmod 660 /etc/kibana/kibana-server.crt 
+```
+```
+echo "server.ssl.enabled: true" | sudo tee -a /etc/kibana/kibana.yml 
+```
+```
+echo "server.ssl.certificate: /etc/kibana/kibana-server.crt" | sudo tee -a /etc/kibana/kibana.yml 
+```
+```
+echo "server.ssl.key: /etc/kibana/kibana-server.key" | sudo tee -a /etc/kibana/kibana.yml 
+```
+
+Modify below with your host name   
+```
+echo "server.publicBaseUrl: \"https://UbuntuSiem:5601\"" | sudo tee -a /etc/kibana/kibana.yml 
+```
+
+
+```
+sudo /usr/share/kibana/bin/kibana-encryption-keys generate  
+```
+##### Append the generated keys into /etc/kibana/kibana.yml  
+```
+sudo nano /etc/kibana/kibana.yml
+```
+###### paste the generated encryption keys at the bottom of the file
+xpack.encryptedSavedObjects.encryptionKey: xxx...  
+xpack.reporting.encryptionKey: xxx...  
+xpack.security.encryptionKey: xxx...  
+
+
+```
+sudo systemctl restart kibana  
+```
+```
+sudo systemctl status kibana
+```
+
+A reboot may be required
+```
+sudo reboot
+```
+
+#  Firefox security exception for Kibana certificate
+Modify with your host name  
+
+Firefox > settings > Security > Certificates -
+View Certificates 
+- Servers TAB > Add add exception  
+https://UbuntuSiem:5601  
+- Get Certificate  
+- Permenantely store this exception   
+- [confirm secrity exception]  
+
+
+https://24ubuntusvrelk-siem.sg.local:5601/login?next=%2F  
+
+Stack management > users - Create user  
+- username - steve   
+- roles - superuser    
+- [create user]  
