@@ -1,4 +1,5 @@
-### S1#show run
+### Switch Configurations
+S1#show run
 Building configuration...
 
 Current configuration : 2645 bytes
