@@ -40,6 +40,7 @@ Red Test: Nmap against DMZ and Windows Server
   - Threat Prevention: Enable threat prevention features to block known malicious IP addresses and domains.
   - SSL Decryption: Implement SSL decryption to inspect HTTPS traffic for malicious content.
 
+![ALT TEXT](https://github.com/Reenhaider/2024CyberProject/blob/main/img/URL-Filtering-paloalto-alert.PNG)
 ---
 
 ## Red Test: Nikto against DMZ Server
