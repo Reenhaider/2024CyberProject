@@ -60,6 +60,8 @@ Red Test: Nmap against DMZ and Windows Server
   - Tests for vulnerabilities such as SQL injection, Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), and Local File Inclusion (LFI).
 - **SSL/TLS Vulnerabilities:**
   - Checks for weak SSL/TLS configurations and vulnerabilities.
+    
+    ![ALT TEXT](https://github.com/Reenhaider/2024CyberProject/blob/main/img/Nikto-output.png)
 
 ### Set up alert in a Palo Alto firewall for detecting and responding to Nikto scans
 
