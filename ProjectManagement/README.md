@@ -1,4 +1,60 @@
+### Project Overview
 
+The project involves the implementation of a Cyber Security Operations Center (CSOC) for small to medium-sized enterprises (SMEs). It includes the development, execution, evaluation, and documentation of a prototype cybersecurity model (CSOC). This infrastructure will consist of both physical and virtualized firewalls, servers, clients, and a SIEM system. The project will also conduct and document Red and Blue (Purple) teaming activities to ensure robust cybersecurity measures.
+
+**Business Problem Definition**
+
+SMEs are increasingly targeted by cyber threats due to their relatively weaker security infrastructures compared to larger organizations. The primary issues faced by SMEs include:
+
+- Insufficient security measures to protect sensitive data.
+  
+- Lack of real-time monitoring and incident response capabilities.
+  
+- Inadequate resources for comprehensive security infrastructure implementation.
+  
+
+This project aims to address these issues by developing a prototype CSOC that provides comprehensive security measures, real-time monitoring, and effective incident response capabilities.
+
+**Scope Clarification**
+
+- What specific business outcomes are expected from implementing the CSOC infrastructure?
+  
+- Are there any budgetary constraints or limitations associated with this project?
+  
+- What is the expected timeline for each phase of the project?
+  
+
+**Team Members**
+
+- Nick Woolcock - Network Specialist
+  
+- Shehreen Haider  - Security Analyst
+  
+- Jarna Salonen - System Administrator (Team Leader)
+  
+
+**Technical Requirements**
+
+- What specific compliance standards or regulations must the CSOC adhere to?
+  
+- How many endpoints are expected to be monitored by the SIEM system?
+  
+- Are there any preferred tools or software versions required for the project?
+  
+
+**Resource Allocation**
+
+- What are the specific roles and responsibilities of each team member?
+  
+- Who will be responsible for maintaining and monitoring the CSOC after implementation?
+  
+
+**Testing and Evaluation**
+
+- What criteria determine the success of the exercises involving the Red and Blue teams?
+  
+- What methods will be used to measure and assess the performance of the CSOC infrastructure?
+  
 __PROJECT PLAN SCOPE – CSOC Cybersecurity Operations Centre for SME's:__
 
 |     |     |
