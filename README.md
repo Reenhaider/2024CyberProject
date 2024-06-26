@@ -20,3 +20,9 @@ The Project also includes red and blue (purple) teaming exercises :
 
 - Red team testing and evaluation using Kali, for testing and evaluating the firewall rules, windows clients and DMZ Web Server
 - Blue team responding using Kali Purple SIEM for alert detection and response.
+
+### Prototype VS Production system configuration
+
+The prototype lab environment uses virtualised systems and a Virtual OPNsense firewall with VMs connected using VirtualBox internal networking.
+
+The production lab environment uses virtualised systems that use bridged networking to connect via a physical Cisco Switch to a physical Palo Alto Firewall.  
